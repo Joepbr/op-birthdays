@@ -82,6 +82,15 @@ class BirthdayResource(Resource):
     def delete(self, birthday_id):
         birthday = Birthday.query.get(birthday_id)
         if birthday:
+            # Check if the birthday has an associated image
+            if birthday.image_url and os.path.exists(birthday.image_url):
+                try:
+                    # Remove the image file
+                    os.remove(birthday.image_url)
+                    print(f"Deleted image: {birthday.image_url}")
+                except Exception as e:
+                    print(f"Error deleting image: {e}")
+
             db.session.delete(birthday)
             db.session.commit()
             return {"message": "Birthday deleted successfully"}, 200
